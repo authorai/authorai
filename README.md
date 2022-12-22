@@ -6,7 +6,7 @@ At AuthorAI we want to reimagine the authoring experience powered by AI. We want
 
 **AuthorAI Blogger:** Writing a blog post usually involves several round-trips to Google Search, reading related content, iterating on original content for the blog, then posting it for readers to enjoy. Our objective is to augment these activities with AI so that the blog author can save time authoring posts, enable more creative focus for the author instead of undifferentiated heavylifting, increase flow for the author leading to publishing more posts as a result, and ultimately leading to more eyeballs and monetization benefits.
 
-That is why we created AuthorAI Blogger which can be used for human and AI in partnership for low-code blog authoring automation. We are sharing a [notebook tutorial](blogger_tutorial.ipynb) so that you can join the exploration. The tutorial walks through basics of AuthorAI + human authoring flow which you can adapt to your needs. Another objective of this notebook is to act as an interactive documentation and playground for the AuthorAI library.
+That is why we created AuthorAI Blogger which can be used for human and AI in partnership for low-code blog authoring automation. We are sharing a [notebook tutorial](https://github.com/authorai/authorai/blob/main/blogger_tutorial.ipynb) so that you can join the exploration. The tutorial walks through basics of AuthorAI + human authoring flow which you can adapt to your needs. Another objective of this notebook is to act as an interactive documentation and playground for the AuthorAI library.
 
 ## Getting Started
 AuthorAI API is powered by Open AI. Sign up for your [Open AI API](https://openai.com/api/) and copy your API key to get started.
@@ -25,7 +25,7 @@ This will generate html, markdown, images in the 'generated' folder.
 
 Here is an example of a 100% auto generated blog post by providing three concepts - Art, Physics, and City to AuthorAI API.
 
-![AuthorAI Blogger Post](blogger-post.png)
+![AuthorAI Blogger Post](https://github.com/authorai/authorai/blob/main/blogger-post.png)
 
 You can auto generate this blog post in a single API call like so.
 
