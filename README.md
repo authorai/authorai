@@ -1,6 +1,6 @@
 # AuthorAI
 
-*Human and AI in Partnership for Low-code [Blog, Site, App, Data...] Authoring Automation*
+*Human and AI in partnership for low-code/no-code authoring automation*
 
 At AuthorAI we want to reimagine the authoring experience powered by AI. We want to explore how state of the art in AI can evolve the *authoring flow* as it applies to creating apps, books, blogs, sites, data, designs, reports, etc. We are happy to launch AuthorAI Blogger as first in series of such APIs.
 
@@ -25,7 +25,7 @@ This will generate html, markdown, images in the 'generated' folder.
 
 Here is an example of a 100% auto generated blog post by providing three concepts - Art, Physics, and City to AuthorAI API.
 
-![AuthorAI Blogger Post](https://github.com/authorai/authorai/blob/main/blogger-post.png)
+![AuthorAI Blogger Post](https://raw.githubusercontent.com/authorai/authorai/main/blogger-post.png)
 
 You can auto generate this blog post in a single API call like so.
 
@@ -72,9 +72,9 @@ post.set_quote(quote_text)
 image_description = blogger.strip_filename(blogger.summarize(post.get_topic(), words=10))
 image_url = blogger.image_from_description('a 3d photo realistic painting of topic ' + image_description)
 
-local_image = blogger.save_image(image_url, description=image_description, folder='generated')
+local_image = blogger.save_image(url=image_url, description=image_description)
 post.set_feature_image(local_image)
 
 post_html = blogger.generate_html(post)
-html_path, markdown_path = blogger.publish(post_html, '', '-'.join(concepts))
+html_path, markdown_path = blogger.publish(post_html=post_html, filename='-'.join(concepts))
 ```
