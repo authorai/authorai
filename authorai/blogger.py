@@ -16,6 +16,10 @@ import sys
 openai.api_key = os.getenv("OPENAI_KEY")
 openai_model = 'text-davinci-003'
 
+def last_update():
+    """Used in development to ensure correct version of the API is called."""
+    return 'add code snippets'
+
 class BlogPost:
     """BlogPost is used to store completion results and then publish the blog post."""
     def __init__(self):
@@ -25,6 +29,8 @@ class BlogPost:
         self.concept = ''
         self.title = ''
         self.topic = ''
+        self.sections = {}
+        self.snippets = {}
         self.tags = []
         self.qna = {}
         self.leaderboard = {}
@@ -73,6 +79,20 @@ class BlogPost:
     def get_answer(self, question: str):
         return self.qna[question]
 
+    def set_sections(self, title: str, section: str):
+        self.sections[title] = section
+    def get_sections(self):
+        return self.sections
+    def get_section(self, title: str):
+        return self.sections[title]
+
+    def set_snippets(self, caption: str, snippet: str):
+        self.snippets[caption] = snippet
+    def get_snippets(self):
+        return self.snippets
+    def get_snippet(self, caption: str):
+        return self.snippets[caption]
+
     def set_quote(self, quote: str):
         self.quote = quote  
     def get_quote(self):
@@ -89,6 +109,21 @@ class BlogPost:
         self.feature_image = feature_image  
     def get_feature_image(self):
         return self.feature_image
+
+class JekyllSite:
+    def __init__(self):
+        self.site_folder = ''
+        self.image_folder = '/assets/img'
+
+    def set_site_folder(self, site_folder: str):
+        self.site_folder = site_folder  
+    def get_site_folder(self):
+        return self.site_folder
+
+    def set_image_folder(self, image_folder: str):
+        self.image_folder = image_folder  
+    def get_image_folder(self):
+        return self.image_folder
 
 
 def openai_completion(prompt, temperature=0.9, tokens=70, model=openai_model):
@@ -170,9 +205,9 @@ def describe_concept(concept, words=50, grade=5):
     Return:
         completion: Completion as paragraph(s) of free text.
     """
-    prompt = 'Describe the concept "' + concept
+    prompt = 'Factually describe the concept "' + concept
     prompt += '" in ' + str(words) + ' words'
-    prompt += ' using English understood by grade level ' + str(grade) + '.'
+    prompt += ' using narrative style English understood by grade level ' + str(grade) + '.'
     completion = openai_completion(prompt, tokens=words, temperature=0).choices[0].text.strip()
     return strip_trailing_sentence(completion)
 
@@ -504,3 +539,59 @@ def auto_generate(keywords, folder='', verbose = False):
     html_path, markdown_path = publish(post_html=post_html, folder=folder, filename='-'.join(post.get_keywords()))
     return local_image, html_path, markdown_path
 
+def generate_code(language, usecase, loc):
+    """Generates code in a given language to implement a use case.
+
+    Args:
+        launguage: Programming language to generate code.
+        usecase: Use case to implement using the generated code.
+        loc: Approximate lines of code to return
+    Returns:
+        caption: Combines language and usecase as a caption for the code snippet.
+        completion: Generated code.
+    """
+    prompt = 'Generate code in ' + language
+    prompt += ' which implements the use case ' + usecase + '.'
+    completion = openai_completion(prompt, tokens=loc*20).choices[0].text.strip()
+    caption = language + ' implementing ' + usecase
+    return caption, completion
+
+def create_jekyll_post(post, jekyll_site, overwrite=False):
+    filepath = jekyll_site.get_site_folder() + '/_posts/'
+    now = datetime.datetime.now()
+    timestamp = now.strftime('%Y-%m-%d')
+    filepath += timestamp + '-'
+    filepath += post.get_title().lower().replace(' ', '-')
+    filepath += '.markdown'
+
+    if not overwrite and os.path.exists(filepath):
+        return filepath
+
+    with open(filepath, "w") as file:
+        # Post meta
+        file.write('---\n')
+        file.write('layout: post\n')
+        file.write('title: ' + post.get_title() + '\n')
+        file.write('date: ' + timestamp + '\n')
+        file.write('categories: ' + ' '.join(post.get_tags()) + '\n')
+        file.write('---\n\n')
+        file.write('![Feature Image](' + jekyll_site.get_image_folder() + '/' + post.get_feature_image() + ')\n\n')
+        file.write(post.get_topic() + '\n\n')
+        for key, value in post.get_sections().items():
+            file.write('## ' + key + '\n')
+            file.write(value + '\n\n')
+        file.write('## Code Examples\n')
+        for key, value in post.get_snippets().items():
+            file.write('*' + key + '*\n')
+            language = key.split()[0].lower()
+            file.write('```' + language + '\n')
+            file.write('{% raw %}\n') if 'liquid' in key.lower() else None
+            file.write(value + '\n')
+            file.write('{% endraw %}\n') if 'liquid' in key.lower() else None
+            file.write('```' + '\n')            
+        file.write('## Frequently Asked Questions\n')
+        for key, value in post.get_qna().items():
+            file.write('### ' + key + '\n')
+            file.write(value + '\n\n')
+        file.close()
+    return filepath
