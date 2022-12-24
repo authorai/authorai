@@ -1,12 +1,14 @@
 # AuthorAI
 
-*Human and AI in partnership for low-code/no-code authoring automation*
+*Enhance your creative authoring flow, leave the plumbing to AuthorAI*
 
-At AuthorAI we want to reimagine the authoring experience powered by AI. We want to explore how state of the art in AI can evolve the *authoring flow* as it applies to creating apps, books, blogs, sites, data, designs, reports, etc. We are happy to launch AuthorAI Blogger as first in series of such APIs.
+At AuthorAI we want to reimagine the authoring experience powered by AI. We want to explore how state of the art in AI can enhance the *creative authoring flow* as it applies to creating apps, books, blogs, sites, data, designs, reports, etc. We are happy to launch AuthorAI Blogger as first in series of such APIs.
 
 **AuthorAI Blogger:** Writing a blog post usually involves several round-trips to Google Search, reading related content, iterating on original content for the blog, then posting it for readers to enjoy. Our objective is to augment these activities with AI so that the blog author can save time authoring posts, enable more creative focus for the author instead of undifferentiated heavylifting, increase flow for the author leading to publishing more posts as a result, and ultimately leading to more eyeballs and monetization benefits.
 
-That is why we created AuthorAI Blogger which can be used for human and AI in partnership for low-code blog authoring automation. We are sharing a [notebook tutorial](https://github.com/authorai/authorai/blob/main/blogger_tutorial.ipynb) so that you can join the exploration. The tutorial walks through basics of AuthorAI + human authoring flow which you can adapt to your needs. Another objective of this notebook is to act as an interactive documentation and playground for the AuthorAI library.
+That is why we created AuthorAI Blogger which can be used for human and AI in partnership for low-code blog authoring automation. We are sharing a [notebook tutorial](https://github.com/authorai/authorai/blob/main/blogger_tutorial.ipynb) so that you can join the exploration. The tutorial walks through basics of AuthorAI + human authoring flow which you can adapt to your needs. Another objective of this notebook is to act as an interactive playground for the AuthorAI library.
+
+**AuthorAI Blogger for Jekyll:** Jekyll is one of the most popular static website generators used among GitHub community. AuthorAI now integrates with Jekyll to generate posts straight into your Jekyll managed static website. See [notebook](https://github.com/authorai/authorai/blob/main/blogger-jekyll.ipynb) used by human author to generate a Jekyll blog post including code snippets, FAQ, multiple sections, and feature image.
 
 ## Getting Started
 AuthorAI API is powered by Open AI. Sign up for your [Open AI API](https://openai.com/api/) and copy your API key to get started.
