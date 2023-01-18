@@ -2,4 +2,8 @@ bs4
 markdownify
 openai
 urllib3
-
+notebook
+nbconvert
+pyppeteer
+notebook-as-pdf
+pypdf

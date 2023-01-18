@@ -14,11 +14,11 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="authorai",
-    version='0.1.1',
+    version='0.1.2',
     description='Enhance your creative authoring flow, leave the plumbing to AuthorAI',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/authorai/authorai",
+    url="https://www.authorai.org",
     keywords = "AI generative transformer authoring automation",
     author='AuthorAi.org',
     author_email='authorai.org@gmail.com',
