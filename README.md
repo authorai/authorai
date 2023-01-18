@@ -2,6 +2,8 @@
 
 *Enhance your creative authoring flow, leave the plumbing to AuthorAI*
 
+Note: This is a community maintained library.
+
 At AuthorAI we want to reimagine the authoring experience powered by AI. We want to explore how state of the art in AI can enhance the *creative authoring flow* as it applies to creating apps, books, blogs, sites, data, designs, reports, etc. We are happy to launch AuthorAI Blogger as first in series of such APIs.
 
 **AuthorAI Blogger:** Writing a blog post usually involves several round-trips to Google Search, reading related content, iterating on original content for the blog, then posting it for readers to enjoy. Our objective is to augment these activities with AI so that the blog author can save time authoring posts, enable more creative focus for the author instead of undifferentiated heavylifting, increase flow for the author leading to publishing more posts as a result, and ultimately leading to more eyeballs and monetization benefits.
