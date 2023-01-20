@@ -12,6 +12,8 @@ That is why we created AuthorAI Blogger which can be used for human and AI in pa
 
 **AuthorAI Blogger for Jekyll:** Jekyll is one of the most popular static website generators used among GitHub community. AuthorAI now integrates with Jekyll to generate posts straight into your Jekyll managed static website. See [notebook](https://github.com/authorai/authorai/blob/main/blogger-jekyll.ipynb) used by human author to generate a Jekyll blog post including code snippets, FAQ, multiple sections, and feature image.
 
+**AuthorAI Artist:** We have now launched AurhotAI Artist API for working with DALL-E and Stable Diffusion models. See [notebook example](https://github.com/authorai/authorai/blob/main/authorai-artist.ipynb) to explore the API. You can generate random art from text and engineer your prompts based on painting style, surface, origin, and more.
+
 ## Getting Started
 AuthorAI API is powered by Open AI. Sign up for your [Open AI API](https://openai.com/api/) and copy your API key to get started.
 
