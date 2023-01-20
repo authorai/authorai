@@ -1,20 +1,11 @@
 # Copyright (c) 2022-present AuthorAI.org (authorai.org@gmail.com)
 
 # Installed packages from requirements.txt
-import openai
 from bs4 import BeautifulSoup
 import markdownify
-import urllib.request
 
-# Pre-installed packages
-import os
-from random import randrange
-import re
-import datetime
-import sys
-
-openai.api_key = os.getenv("OPENAI_KEY")
-openai_model = 'text-davinci-003'
+from authorai import core
+from authorai import artist
 
 def last_update():
     """Used in development to ensure correct version of the API is called."""
@@ -125,23 +116,6 @@ class JekyllSite:
     def get_image_folder(self):
         return self.image_folder
 
-
-def openai_completion(prompt, temperature=0.9, tokens=70, model=openai_model):
-    """AuthorAI wrapper for OpenAI Completion API.
-
-    Args:
-        prompt: Zero/few-shot learning prompt for generating a completion.
-        temperature: Model takes more risks with higher values (0.9), model is deterministic at 0.
-        tokens: Similar count as words in prompt plus completion. Counts towards OpenAI API cost.
-        model: Model version of OpenAI GPT to run.
-
-    Returns:
-        The as-is completion response as JSON.
-    """
-    response = openai.Completion.create(
-        model=model, prompt=prompt, temperature=temperature, max_tokens=tokens)
-    return response
-
 def completion_list(prompt, tokens=70, temperature=0.9):
     """Converts text completion to a Python list. 
     
@@ -156,10 +130,10 @@ def completion_list(prompt, tokens=70, temperature=0.9):
         response: The full-text completion.
         response_list: Completion as a Python list.
     """    
-    response = openai_completion(prompt, tokens=tokens, temperature=temperature)
+    response = core.openai_completion(prompt, tokens=tokens, temperature=temperature)
     response = response.choices[0].text.strip()
     response = response.replace(response[:response.find('1.')], "")
-    strip_response = re.sub(r'\d+. ', '', response)
+    strip_response = core.re.sub(r'\d+. ', '', response)
     response_list = strip_response.split('\n')
     return response, response_list
 
@@ -208,7 +182,7 @@ def describe_concept(concept, words=50, grade=5):
     prompt = 'Factually describe the concept "' + concept
     prompt += '" in ' + str(words) + ' words'
     prompt += ' using narrative style English understood by grade level ' + str(grade) + '.'
-    completion = openai_completion(prompt, tokens=words, temperature=0).choices[0].text.strip()
+    completion = core.openai_completion(prompt, tokens=words, temperature=0).choices[0].text.strip()
     return strip_trailing_sentence(completion)
 
 def titles_from_topic(topic, count=10):
@@ -252,16 +226,7 @@ def qna(question):
     """
     prompt='Q: '
     prompt+=question + '\nA:'
-    response = openai.Completion.create(
-        model=openai_model,
-        prompt=prompt,
-        temperature=0,
-        max_tokens=100,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stop=["\n"]
-    )
+    response = core.openai_completion(prompt=prompt, temperature=0, tokens=100)
     return response.choices[0].text.strip()
 
 def quote(concept):
@@ -274,12 +239,7 @@ def quote(concept):
         response_quote: A quotable quote as completion response.
     """
     prompt='Suggest a famous quote about ' + concept + '.'
-    response = openai.Completion.create(
-        model=openai_model,
-        prompt=prompt,
-        temperature=0.9,
-        max_tokens=100    
-    )
+    response = core.openai_completion(prompt=prompt, temperature=0.9, tokens=100)
     response_quote = response.choices[0].text.strip()
     return response_quote
 
@@ -297,7 +257,7 @@ def summarize(topic, words=20, grade=5):
     prompt = 'Summarize ' + topic
     prompt += ' in ' + str(words) + ' words '
     prompt += ' using English understood by grade level ' + str(grade) + '.'
-    return openai_completion(prompt, temperature=0.9).choices[0].text.strip()
+    return core.openai_completion(prompt, temperature=0.9).choices[0].text.strip()
 
 def leaderboard(topic, entity, count=10):
     """Recommends an ordered list of Top N entities.
@@ -313,51 +273,6 @@ def leaderboard(topic, entity, count=10):
     prompt = 'Recommend ordered list of top ' + str(count) + ' ' + entity
     prompt += ' based on topic ' + topic + '.'
     return completion_list(prompt, tokens=count*20)
-
-def image_from_description(description, size="1024x1024"):
-    """Uses DALL.E Image generation API to create an image based on description provided.
-    
-    Args:
-        description: Description of the image to be generated.
-    Returns:
-        image_url: Generated PNG image url.
-    """
-    response = openai.Image.create(
-      prompt=description,
-      n=1,
-      size=size
-    )
-    image_url = response['data'][0]['url']
-    return image_url
-
-def strip_filename(filename: str) -> str:
-    """Strip a filename of any characters which are not alphabets while preserving whitespace.
-
-    Args:
-        filename: File name to strip.
-    Returns:
-        filename_stripped: Stipped file name. Maybe same as input.
-    """
-    filename_stripped = re.sub(r'[^a-zA-Z\s]', '', filename)
-    return filename_stripped
-
-
-def save_image(url, description, folder='', ext='png'):    
-    """Saves a PNG  image to a local folder from a source URL using description as file name.
-
-    Args:
-        url: PNG image url to save.
-        description: Long file name to use.
-        folder: Folder where image will be saved locally.
-    Returns:
-        filename: Local image file name.
-    """
-    now = datetime.datetime.now()
-    timestamp = now.strftime('%Y%m%d%H%M%S')
-    filename = description + ' ' + timestamp + '.' + ext
-    local_file_path = os.path.join(folder, filename)
-    urllib.request.urlretrieve(url, local_file_path)
-    return filename
 
 def generate_html(post):
     """Generates HTML from blog post object.
@@ -455,14 +370,16 @@ def publish(post_html, filename, folder=''):
        html_filename: Local HTML file name.
        md_filename: Local Markdown file name.
     """
-    now = datetime.datetime.now()
+    filename = filename[:225] if len(filename) > 225 else filename
+
+    now = artist.datetime.datetime.now()
     timestamp = now.strftime('%Y%m%d%H%M%S')
     soup = BeautifulSoup(post_html, "html.parser")
     pretty_html = soup.prettify()
     html_filename = filename + '-' + timestamp + '.html'
-    local_html_file = os.path.join(folder, html_filename)
+    local_html_file = core.os.path.join(folder, html_filename)
     md_filename = filename + '-' + timestamp + '.md'
-    local_markdown_file = os.path.join(folder, md_filename)
+    local_markdown_file = core.os.path.join(folder, md_filename)
     markdown = markdownify.markdownify(pretty_html, heading_style="ATX")
     with open(local_html_file, 'w') as file:
         file.write(pretty_html)
@@ -490,7 +407,7 @@ def auto_generate(keywords, folder='', verbose = False):
     # Ideate
     response, response_list = concepts_combining_keywords(keywords)
     print(response) if verbose else None
-    post.set_concept(response_list[randrange(len(response_list)-1)])
+    post.set_concept(response_list[artist.random.randrange(len(response_list)-1)])
     print(post.get_concept()) if verbose else None
 
     # Research
@@ -501,7 +418,7 @@ def auto_generate(keywords, folder='', verbose = False):
     # Write
     response, response_list = titles_from_topic(post.get_topic())
     print(response) if verbose else None
-    post.set_title(response_list[randrange(len(response_list)-1)])
+    post.set_title(response_list[artist.random.randrange(len(response_list)-1)])
     print(post.get_title()) if verbose else None
     response, response_list = tags_from_topic(post.get_topic())
     post.set_tags(response_list)
@@ -527,10 +444,10 @@ def auto_generate(keywords, folder='', verbose = False):
     print(post.get_quote()) if verbose else None
 
     # Illustrate
-    image_description = strip_filename(summarize(post.get_topic(), words=10))
+    image_description = core.strip_filename(summarize(post.get_topic(), words=10))
     print(image_description) if verbose else None
-    image_url = image_from_description('a 3d photo realistic painting of topic ' + image_description)
-    local_image = save_image(url=image_url, folder=folder, description=image_description)
+    image_url = artist.image_from_description('a 3d photo realistic painting of topic ' + image_description)
+    local_image = artist.save_image(url=image_url, folder=folder, description=image_description)
     post.set_feature_image(local_image)
     print(post.get_feature_image()) if verbose else None
 
@@ -552,19 +469,19 @@ def generate_code(language, usecase, loc):
     """
     prompt = 'Generate code in ' + language
     prompt += ' which implements the use case ' + usecase + '.'
-    completion = openai_completion(prompt, tokens=loc*20).choices[0].text.strip()
+    completion = core.openai_completion(prompt, tokens=loc*20).choices[0].text.strip()
     caption = language + ' implementing ' + usecase
     return caption, completion
 
 def create_jekyll_post(post, jekyll_site, overwrite=False):
     filepath = jekyll_site.get_site_folder() + '/_posts/'
-    now = datetime.datetime.now()
+    now = artist.datetime.datetime.now()
     timestamp = now.strftime('%Y-%m-%d')
     filepath += timestamp + '-'
     filepath += post.get_title().lower().replace(' ', '-')
     filepath += '.markdown'
 
-    if not overwrite and os.path.exists(filepath):
+    if not overwrite and core.os.path.exists(filepath):
         return filepath
 
     with open(filepath, "w") as file:

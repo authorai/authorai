@@ -36,7 +36,7 @@ setup(
     ],    
     packages=["authorai"],
     include_package_data=True,
-    install_requires=['openai', 'bs4', 'markdownify', 'urllib3'],
+    install_requires=['openai', 'bs4', 'markdownify', 'urllib3', 'stability_sdk'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     test_suite='tests',

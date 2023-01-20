@@ -2,6 +2,8 @@ from authorai import blogger
 
 post = blogger.BlogPost()
 
+generated_folder = 'generated'
+
 post.set_auto(True)
 post.set_full_feature(True)
 
@@ -33,10 +35,10 @@ post.set_quote(quote_text)
 image_description = blogger.strip_filename(blogger.summarize(post.get_topic(), words=10))
 image_url = blogger.image_from_description('a 3d photo realistic painting of topic ' + image_description)
 
-local_image = blogger.save_image(url=image_url, description=image_description, folder='generated')
+local_image = blogger.save_image(url=image_url, description=image_description, folder=generated_folder)
 post.set_feature_image(local_image)
 
 post_html = blogger.generate_html(post)
 html_path, markdown_path = blogger.publish(post_html=post_html, 
-    folder='generated', 
+    folder=generated_folder, 
     filename='-'.join(post.get_keywords()))

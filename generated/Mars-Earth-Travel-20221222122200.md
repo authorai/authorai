@@ -30,7 +30,7 @@
 
 
 
- This blog post was 100% AI generated using AuthorAI API. 
+ This blog post was 100% AI generated using <a href="https://www.authorai.org/">AuthorAI</a> API. 
  Powered by OpenAI GPT3 and DALL.E. For demo purposes only.
  
 # 

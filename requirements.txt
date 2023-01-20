@@ -2,6 +2,8 @@ bs4
 markdownify
 openai
 urllib3
+stability-sdk
+
 notebook
 nbconvert
 pyppeteer
