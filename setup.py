@@ -14,7 +14,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="authorai",
-    version='0.2.1',
+    version='0.2.2',
     description='Enhance your creative authoring flow, leave the plumbing to AuthorAI',
     long_description=long_description,
     long_description_content_type="text/markdown",

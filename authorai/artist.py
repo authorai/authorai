@@ -157,3 +157,38 @@ def generate_art_sd(prompt, size=512, folder='') -> str:
                 local_file_path = os.path.join(folder, filename)
                 img.save(local_file_path) # Save our generated images with their seed number as the filename.  
                 return local_file_path  
+
+def help(style='', medium='', surface='', subject='', origin=''):
+    prompt = 'Suggest a matching style, medium and surface for ' + subject + '.' \
+        if subject and not style and not medium and not surface and not origin else ''
+    prompt = 'Suggest a matching painting style, medium and surface for ' + origin + ' origin painting.' \
+        if origin and not style and not medium and not surface and not subject else ''
+    prompt = 'Suggest a matching painting style, medium and surface for ' + origin + ' origin ' + subject + '.' \
+        if origin and not style and not medium and not surface and not subject else ''
+    if not prompt:
+        prompt = 'What is the best painting '
+        prompt += ' style to use on ' if not style and medium and surface else ''
+        prompt += ' medium to use with ' if not medium and style and surface else ''
+        prompt += ' surface to paint for ' if not surface and style and medium else ''
+        prompt += ' style and using which medium to paint on ' if not style and not medium and surface else ''
+        prompt += ' medium to use on which surface for ' if not medium and style and not surface else ''
+        prompt += ' style and surface to paint with ' if not surface and not style and medium else ''
+        prompt += style + ' style' if style else ''
+        prompt += medium + ' medium' if medium else ''
+        prompt += surface + ' surface' if surface else ''
+        prompt += '?'
+    completion = core.openai_completion(
+        prompt=prompt,
+        tokens=200,
+        temperature=0.3).choices[0].text.strip()
+    return completion
+
+# generate a prompt to create a professional quality painting based on a list of keywords
+def generate_prompt(keywords, words=50):
+    prompt = '''As a professional artist suggest a unique and
+        interesting painting description based on keywords: ''' + ', '.join(keywords) + '.'
+    prompt = core.openai_completion(
+        prompt=prompt,
+        tokens=int(words * 4/3 + 1),
+        temperature=0.9).choices[0].text.strip()
+    return prompt
